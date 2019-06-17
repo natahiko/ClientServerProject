@@ -4,19 +4,21 @@ let products=["Heather","Catnip","Valerian","Chamomile","Bloodroot","Beladonna",
 let prices=["$50","$150","$37","$55","$28","$99","$67"];
 
 function fillGroupLinks(){
-   // $("#groups").append(" <button onclick='addGroup()' class='btn btn-outline-dark btn-lg addgroup'>+</button>");
     for(let i=0;i<groups.length;i++)
-    $("#grouplist").append("<a id='group"+(i)+"' onclick='clickOnGroup("+(i)+")' class='grouplinks' href=#grouplist'>"+groups[i]+"</a><br>")
+    $("#grouplist").append("<a id='group"+(i)+"' onclick='clickOnGroup("+(i)+")' class='grouplinks btn btn-link btn-sm' href=#grouplist'>"+groups[i]+"</a><br>")
 
 }
 function clickOnGroup(groupid) {
 
     $("#productlist").empty();
-    $("#productlist").append("<p class='title'> "+ groups[groupid]+"</p><hr style='margin: 5px;'><button> add product</button><br>");
+    $("#productlist").append("<p class='title'> "+ groups[groupid]+"</p><hr style='margin: 5px;'><button class='btn btn-outline-secondary btn-sm'> +new</button><br>");
     $("#groupinfo").empty();
-    $("#groupinfo").append("<p class='title'> "+ groups[groupid]+"</p><hr style='margin: 5px;'><button> edit group</button><br><p>group description here</p>");
+    $("#groupinfo").append("<button class='btn btn-outline-danger btn-sm delete ' >delete</button>" +
+        "<p class='title'> "+ groups[groupid]+"</p><hr style='margin: 5px;'>" +
+        "<button class='btn btn-outline-secondary btn-sm edit'> &#9998;</button><br>" +
+        "<p>group description here</p><p>Total group price: $200</p><button class='btn btn-outline-info btn-sm'>all group info</button>");
     for(var i=0;i<products.length;i++){
-        $("#productlist").append("<a href='#productlist' onclick='clickOnProduct("+(i)+")'>"+products[i]+"</a><br>");
+        $("#productlist").append("<a href='#body' class='btn btn-link btn-sm' onclick='clickOnProduct("+(i)+")'>"+products[i]+"</a><br>");
     }
 
 }
@@ -24,8 +26,8 @@ function clickOnGroup(groupid) {
 function clickOnProduct(productid) {
 
     $("#productinfo").empty();
-    $("#productinfo").append("<p class='title'> "+ products[productid]+"</p><hr style='margin: 5px;'><button>edit product</button><a>description</a><br>" +
-        "<a> price:"+prices[productid]+"</a><br><a>amount: 10 </a><br><button>sell</button><button>buy</button>");
+    $("#productinfo").append("<button class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button><p class='title'> "+ products[productid]+"</p><hr style='margin: 5px;'><button class='btn btn-outline-secondary btn-sm edit'>&#9998;</button><a>description</a><br>" +
+        "<a> price:"+prices[productid]+"</a><br><a>amount: 10 </a><br><input type='number' class='form-control form-control-sm' min='0'><button class='btn btn-outline-info btn-sm'>sell</button><button class='btn btn-outline-success btn-sm'>buy</button>");
 
 
 }

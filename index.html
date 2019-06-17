@@ -7,16 +7,35 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
 </head>
-<body>
+<body id="body">
+<div id="messagepanel" class="messagepanel">
+    <a id="backbutton" class="backbutton">&#10539;</a>
+    <div id="messagebox" class="card"></div>
+</div>
 
-<div id="productinfo" class="panel productinfo"></div>
+
+<div id= "searchdiv" class="input-group input-group-sm mb-3" style="width:80%;">
+   <button id="allinfo" class="btn btn-outline-info btn-sm">All info</button>
+   <span id="totalprice">Total price: $7546</span>
+    <input type="text" class="form-control"  aria-describedby="basic-addon2" style="border-bottom-left-radius: 5px;border-top-left-radius: 5px">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button">Search</button>
+    </div>
+
+</div>
+
+<div id="content" class="scrollbar scrollbar-primary">
+<div id="productinfo" class="panel productinfo "></div>
 <div id="groupinfo" class="panel groupinfo"></div>
 <div id="productlist" class="panel productlist"></div>
-<div id="grouplist" class="panel grouplist">
+<div id="grouplist" class="panel grouplist card-body">
     <p class="title">Witch Shop</p>
     <hr style="margin: 5px;">
-    <button onclick="addGroup()" style="float: right;">new group</button><br>
+    <button onclick="addGroup()" class="btn btn-outline-secondary btn-sm">+new</button><br>
 </div>
+</div>
+
+
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
