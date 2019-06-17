@@ -1,0 +1,55 @@
+*{border-radius: 5px;
+font-size: 22px;}
+button{
+    float: right;
+}
+body{
+background: white!important;
+}
+.panel{
+    width:24%;
+    position: absolute;
+    height:70%;
+    top: 10%;
+    bottom:20% ;
+    padding: 10px 2%;
+    background: whitesmoke;
+    box-shadow: 0 0 5px black;
+    overflow: auto;
+}
+.grouplist{
+    height:72%;
+    top: 9%;
+    bottom:19% ;
+    right:50%;
+    width:22%;
+    left:30%;
+}
+.productlist{
+    right:32%;
+    left:48%;
+    padding-left: 5%;
+}
+
+.groupinfo{
+    right:70%;
+    left:10%;
+    padding-right: 5%;
+}
+
+.productinfo{
+    top: 11%;
+    bottom:21% ;
+    height: 68%;
+    right:12%;
+    left:68%;
+    padding: 5px 15px 5px 5%;
+}
+
+.title{
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.grouplinks{}
