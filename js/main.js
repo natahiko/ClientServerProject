@@ -54,7 +54,7 @@ function clickOnGroup(groupid) {
             $("#groupinfo").append("<button onclick='deleteGroup("+groupid+")' class='btn btn-outline-danger btn-sm delete ' >delete</button>" +
                 "<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'>" +
                 "<button onclick='editGroup("+groupid+","+json+")' class='btn btn-outline-secondary btn-sm edit'> &#9998;</button><br>" +
-                "<p style='font-size: 12px;'>"+obj["description"]+"</p><p>Total group price: "+obj["totalprice"]+"</p><button class='btn btn-outline-info btn-sm'>all group info</button>");
+                "<p style='font-size: 12px;'>"+obj["description"]+"</p><p>Total group price: "+obj["totalprice"]+"</p><button onclick='getAllGroupInfo("+groupid+")' class='btn btn-outline-info btn-sm'>all group info</button>");
 
             $.ajax({
                 url: "http://localhost:8889/api/products/"+groupid,
@@ -70,6 +70,53 @@ function clickOnGroup(groupid) {
         }
     });
 
+}
+$("#allinfo").click(function () {
+    $("#messagepanel").show();
+    $("#messagebox").empty();
+    $.ajax({
+        url: "http://localhost:8889/api/allgroups",
+        method: 'POST',
+        success: function (json) {
+            var array = json.split("#:#");
+            for(var i=0; i<array.length; i++)
+                addAllGroupInfoToMessBox(array[i]);
+            $("#messagebox").append("<button class='btn btn-success' onclick='$("+"#backbutton"+").click();'>OK</button>");
+        }
+    });
+});
+function getAllGroupInfo(groupid) {
+    $("#messagepanel").show();
+    $("#messagebox").empty();
+    $.ajax({
+        url: "http://localhost:8889/api/products/"+groupid,
+        method: 'POST',
+        success: function (json) {
+            addAllGroupInfoToMessBox(json);
+            $("#messagebox").append("<button class='btn btn-success' onclick='$("+"#backbutton"+").click();'>OK</button>");
+        }
+    });
+}
+function addAllGroupInfoToMessBox(json) {
+    json = json.replace(/'/g,'"');
+    var obj = JSON.parse(json);
+    var names = obj.prodnames.split('|').join('"');
+    names = JSON.parse(names);
+    var descs = obj.descriptions.split('|').join('"');
+    descs = JSON.parse(descs);
+    var prices = obj.prices;
+    prices = JSON.parse(prices);
+    var amounts = obj.amounts;
+    amounts = JSON.parse(amounts);
+    var producers = obj.producers.split('|').join('"');
+    producers = JSON.parse(producers);
+    var ids = JSON.parse(obj.ids);
+    $("#messagebox").append("<p class='alltitle'>"+obj.groupname+" (id="+obj.id+")</p><hr style='margin: 5px;'><p class='alldesc'>"+obj.description+"</p>");
+    for(var i=0;i<names.length; i++){
+        $("#messagebox").append("<div class='allproduct'><p><span class='all_prodname'>"+names[i]+"</span> "+prices[i]+"$</p>" +
+            "<p class='all_proddesc'>"+descs[i]+"</p><p>In storage: <span class='all_prodam'>"+amounts[i]+"</span> from " +
+            "<span class='all_producer'>"+producers[i]+"</span></p></div>");
+    }
 }
 
 function deleteGroup(groupid) {
@@ -88,6 +135,21 @@ function deleteGroup(groupid) {
         }
     });
 }
+function deleteProduct(prodid) {
+    if(!confirm("Do you really want to delete this product?"))
+        return;
+    $.ajax({
+        url: "http://localhost:8889/api/good/"+prodid,
+        method: 'DELETE',
+        success: function () {
+            $("#productlist").empty();
+            $("#groupinfo").empty();
+            $("#productinfo").empty();
+            sessionStorage.setItem("product","");
+            clickOnGroup(sessionStorage.getItem("group"));
+        }
+    });
+}
 
 function clickOnProduct(productid) {
     sessionStorage.setItem("product",productid);
@@ -102,16 +164,49 @@ function clickOnProduct(productid) {
             json = json.replace(/'/g,'"');
             var obj = JSON.parse(json);
             $("#productinfo").empty();
-            $("#productinfo").append("<button class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button><p class='title'> "+ obj.prodname+"</p>" +
+            $("#productinfo").append("<button onclick='deleteProduct("+productid+")' class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button><p class='title'> "+ obj.prodname+"</p>" +
                 "<hr style='margin: 5px;'><button class='btn btn-outline-secondary btn-sm edit' onclick='editProduct("+productid+","+json+")'>&#9998;</button>" +
                 "<p style='font-size: 16px'>"+obj.description+"</p>" +
                 "<a> Price:"+obj.price+"</a><br><a>Amount: "+obj.amount+"</a><br><a>Producer: "+obj.producer+"</a><br>" +
-                "<input type='number' class='form-control form-control-sm' min='0'>" +
-                "<button class='btn btn-outline-info btn-sm'>sell</button><button class='btn btn-outline-success btn-sm'>buy</button>");
+                "<input id='change_amount' type='number' class='form-control form-control-sm' min='0'>" +
+                "<button onclick='sellProduct("+productid+","+obj.amount+")' class='btn btn-outline-info btn-sm'>sell</button><button onclick='buyProduct("+productid+","+obj.amount+")' class='btn btn-outline-success btn-sm'>buy</button>");
 
         }
     });
    }
+
+function sellProduct(prodid, amount) {
+    var am = $("#change_amount").val();
+    if(am=="")
+        return;
+    amount = (+am + +amount);
+    var url = 'http://localhost:8889/api/good?id='+prodid;
+    url += '&amount='+amount;
+    jQuery.ajax({
+        url: url,
+        method: 'POST',
+        success: function (data) {
+            clickOnProduct(prodid);
+        }
+    });
+}
+function buyProduct(prodid, amount) {
+    var am = $("#change_amount").val();
+    if(am=="" || amount-am<0) {
+        $("#change_amount").val()
+        return;
+    }
+    amount -= am;
+    var url = 'http://localhost:8889/api/good?id='+prodid;
+    url += '&amount='+amount;
+    jQuery.ajax({
+        url: url,
+        method: 'POST',
+        success: function (data) {
+            clickOnProduct(prodid);
+        }
+    });
+}
 function editGroup(groupid, obj) {
     $("#messagepanel").show();
     $("#messagebox").empty();
@@ -214,7 +309,7 @@ function addGroupToDB() {
     }
     $("#backbutton").click();
     $.ajax({
-        url: "http://localhost:8889/api/good?description="+desc+"&groupname="+name,
+        url: "http://localhost:8889/api/group?description="+desc+"&groupname="+name,
         method: "PUT",
         success: function (json) {
             alert("New group added successfully");

@@ -1,0 +1,27 @@
+.alltitle{
+    font-size: 22px;
+    font-weight: bolder;
+    text-align: center;
+    margin: 10px 10px;
+    padding: 0;
+}
+.alldesc{
+    font-size: 12px;
+}
+.allproduct{
+    font-size: 16px;
+}
+.all_prodname{
+    font-size: 18px;
+    font-weight: bold;
+    color: #380978
+}
+.all_proddesc{
+    font-size: 12px;
+}
+.all_prodam{
+    color: #4b0076;
+}
+.all_producer{
+    text-decoration: underline;
+}
