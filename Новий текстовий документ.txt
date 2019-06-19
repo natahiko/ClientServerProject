@@ -1,0 +1,10 @@
+
+<div id="addGroup_panel" class="addGroup_panel">
+    <div id="addGroup" class="addGroup_fields">
+        <span>Groupname:</span><br><input id="entry_groupname" type="text" maxlength="20" class="form-control">
+        <span>Description:</span><br><input id="entry_groupdesc" type="text" style="margin-bottom: 10px;"
+                                       class="form-control">
+        <a id="back_addGroup_button" href="#content" class="back_button">&#10539;</a>
+        <a id="final_addGroup_button" href="#content" class="btn btn-success entry_long">Add</a>
+    </div>
+</div>
