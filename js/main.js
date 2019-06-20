@@ -279,20 +279,20 @@ function editProductInDB(prodid) {
 function addGroup(){
     $("#messagepanel").show();
     $("#messagebox").empty();
-    $("#messagebox").append("<span>Groupn ame:</span><br><input id='entry_groupname' type='text' val='' maxlength='20'>" +
-        "<span>Description:</span><br><input id='entry_groupdesc' type='text' val='' style='margin-bottom: 10px;' class='form-control'>\n" +
-        "<a onclick='addGroupToDB()' href='#content' class='btn btn-success entry_long'>Add</a>");
+    $("#messagebox").append("<span>Group name:</span><input id='entry_groupname' type='text' val='' maxlength='20' class='form-control form-control-sm'>" +
+        "<span >Description:</span><input id='entry_groupdesc' type='text' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>\n" +
+        "<a onclick='addGroupToDB()' href='#content' class='btn btn-info btn-sm btn-block '>Add</a>");
 
 }
 function addProduct(groupid){
     $("#messagepanel").show();
     $("#messagebox").empty();
-    $("#messagebox").append("<span>Product name:</span><br><input id='entry_prodname' type='text' val='' maxlength='20'>" +
-        "<span>Description:</span><br><input id='entry_proddesc' type='text' val='' style='margin-bottom: 10px;' class='form-control'>\n" +
-        "<span>Price:</span><br><input id='entry_prodprice' type='number' min='1' val='' style='margin-bottom: 10px;' class='form-control'>"+
-        "<span>Amount:</span><br><input id='entry_prodamount' type='number' min='1' val='' style='margin-bottom: 10px;' class='form-control'>"+
-        "<span>Producer:</span><br><input id='entry_produser' type='text' val='' style='margin-bottom: 10px;' class='form-control'>"+
-        "<a onclick='addProductToDB("+groupid+")' href='#content' class='btn btn-success entry_long'>Add</a>");
+    $("#messagebox").append("<span>Product name:</span><input id='entry_prodname' type='text' val='' maxlength='20' class='form-control form-control-sm'>" +
+        "<span>Description:</span><input id='entry_proddesc' type='text' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>\n" +
+        "<span>Price:</span><input id='entry_prodprice' type='number' min='1' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
+        "<span>Amount:</span><input id='entry_prodamount' type='number' min='1' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
+        "<span>Producer:</span><input id='entry_produser' type='text' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
+        "<a onclick='addProductToDB("+groupid+")' href='#content' class='btn btn-info btn-sm btn-block '>Add</a>");
 }
 
 $("#backbutton").click(function () {
