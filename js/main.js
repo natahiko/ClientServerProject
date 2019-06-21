@@ -95,7 +95,7 @@ function getAllGroupInfo(groupid) {
         method: 'POST',
         success: function (json) {
             addAllGroupInfoToMessBox(json);
-            $("#messagebox").append("<button class='btn btn-info btn-block' onclick='$("+"#backbutton"+").click();'>OK</button>");
+            $("#messagebox").append("<button class='btn btn-info btn-block' onclick='back()'>OK</button>");
         }
     });
 }
@@ -303,11 +303,11 @@ function addProduct(groupid){
         "<a onclick='addProductToDB("+groupid+")' href='#content' class='btn btn-info btn-sm btn-block '>Add</a>");
 }
 
-$("#backbutton").click(function () {
+
+function back() {
     $("#messagepanel").hide();
     $("#messagebox").empty();
-
-});
+}
 function addGroupToDB() {
     var name = $("#entry_groupname").val();
     var desc = $("#entry_groupdesc").val();
