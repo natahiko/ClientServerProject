@@ -1,0 +1,26 @@
+.alltitle{
+    font-size: 24px;
+    text-align: center;
+    margin: 5px 0;
+    padding: 0;
+}
+.alldesc{
+    font-size: 16px;
+}
+.allproduct{
+    font-size: 16px;
+}
+.all_prodname{
+    font-size: 18px;
+    font-weight: bold;
+    color: #380978
+}
+.all_proddesc{
+    font-size: 12px;
+}
+.all_prodam{
+    color: #4b0076;
+}
+.all_producer{
+    text-decoration: underline;
+}
