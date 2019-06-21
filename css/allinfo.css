@@ -1,26 +1,58 @@
-.alltitle{
-    font-size: 24px;
-    text-align: center;
-    margin: 5px 0;
-    padding: 0;
-}
 .alldesc{
-    font-size: 16px;
+    font-size: 18px;
+}
+.allproduct, .all_prodname, .all_proddesc, .all_prodam, .all_producer, .all_prodname span{
+    margin: 0;
+    padding: 0;
 }
 .allproduct{
     font-size: 16px;
 }
 .all_prodname{
-    font-size: 18px;
+    font-size: 20px;
     font-weight: bold;
-    color: #380978
+    color: #1B1433
 }
 .all_proddesc{
-    font-size: 12px;
+    font-size: 16px;
 }
 .all_prodam{
-    color: #4b0076;
+    color: #1B1433;
+    font-size: 18px;
+    font-weight: bolder;
 }
 .all_producer{
     text-decoration: underline;
+}
+.finded_title{
+    color: #1B1433;
+    margin: 0;
+    padding: 0;
+    font-size: 32px;
+    background: rgba(48, 207, 208, 0.19);
+    text-align: center;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px #1ba2d0;
+}
+.finded_group{
+    cursor: pointer;
+    font-size: 16px;
+}
+.finded_group:hover{
+    background: rgba(167,167,167,0.59);
+}
+.find_name{
+    margin: 0;
+    margin-top: 15px;
+    padding: 0;
+    font-size: 19px;
+    font-weight: bolder;
+}
+.highsearch_part{
+    background: rgba(48, 207, 208, 0.57);
+}
+.finded_producer_title{
+    font-weight: bolder;
+    font-style: italic;
+    font-size: 14px;
 }

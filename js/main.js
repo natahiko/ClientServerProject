@@ -54,7 +54,7 @@ function clickOnGroup(groupid) {
             $("#groupinfo").append("<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'>" +
                 "<button onclick='editGroup("+groupid+","+json+")' class='btn btn-outline-secondary btn-sm edit'> &#9998;</button><br>" +
                 "<p style='font-size: 13px;'>"+obj["description"]+"</p><p style='font-size: 18px;'>Total group price: $"+obj["totalprice"]+"</p><button onclick='getAllGroupInfo("+groupid+")' " +
-                "class='btn btn-outline-info btn-sm'>all group info</button><br><br><button onclick='deleteGroup(\"+groupid+\")' class='btn btn-outline-danger btn-sm delete ' >delete</button>");
+                "class='btn btn-outline-info btn-sm'>all group info</button><br><br><button onclick='deleteGroup("+groupid+")' class='btn btn-outline-danger btn-sm delete ' >delete</button>");
 
             $.ajax({
                 url: "http://localhost:8889/api/products/"+groupid,
@@ -80,10 +80,9 @@ $("#allinfo").click(function () {
         success: function (json) {
             var array = json.split("#:#");
             for(var i=0; i<array.length; i++){
-                alert(array[i]);
                 addAllGroupInfoToMessBox(array[i]);
             }
-            $("#messagebox").append("<button class='btn btn-success' onclick='$("+"#backbutton"+").click();'>OK</button>");
+            $("#messagebox").append("<button class='btn btn-info btn-block' onclick='back()'>OK</button>");
         }
     });
 });
@@ -114,9 +113,9 @@ function addAllGroupInfoToMessBox(json) {
     var producers = obj.producers.split('|').join('"');
     producers = JSON.parse(producers);
     var ids = JSON.parse(obj.ids);
-    $("#messagebox").append("<p class='alltitle'>"+obj.groupname+" (id="+obj.id+")</p><hr style='margin: 5px;'><p class='alldesc'>"+obj.description+"</p>");
+    $("#messagebox").append("<p class='finded_title'>"+obj.groupname+"</p><hr style='margin: 5px;'><p class='alldesc'>"+obj.description+"</p>");
     for(var i=0;i<names.length; i++){
-        $("#messagebox").append("<div class='allproduct'><p><span class='all_prodname'>"+names[i]+"</span> "+prices[i]+"$</p>" +
+        $("#messagebox").append("<div class='allproduct'><p><span class='all_prodname'>"+names[i].toUpperCase()+"</span> "+prices[i]+"$</p>" +
             "<p class='all_proddesc'>"+descs[i]+"</p><p>In storage: <span class='all_prodam'>"+amounts[i]+"</span> from " +
             "<span class='all_producer'>"+producers[i]+"</span></p></div>");
     }
@@ -172,7 +171,7 @@ function clickOnProduct(productid) {
                 "<p style='font-size: 18px; margin: 10px;' > Price:$"+obj.price+"<br>Amount: "+obj.amount+"<br>Producer: "+obj.producer+"<p>" +
                 "<input id='change_amount' type='number' style='margin-top: 0px;' class='form-control form-control-sm' min='0'>" +
                 "<button onclick='sellProduct("+productid+","+obj.amount+")' class='btn btn-outline-info btn-sm sellbuy'>sell</button><button onclick='buyProduct("+productid+","+obj.amount+")' class='btn btn-outline-success btn-sm sellbuy'>buy</button>" +
-                "<br><br><button onclick='deleteProduct(\"+productid+\")' class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button>");
+                "<br><br><button onclick='deleteProduct("+productid+")' class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button>");
 
         }
     });
@@ -190,11 +189,10 @@ function buyProduct(prodid, amount) {
         method: 'POST',
         success: function (data) {
             clickOnProduct(prodid);
-
+            clickOnGroup(sessionStorage.getItem("group"));
         }
     });
     fillTotalPrice();
-    //TODO change total group price!
 }
 function sellProduct(prodid, amount) {
     var am = $("#change_amount").val();
@@ -210,10 +208,10 @@ function sellProduct(prodid, amount) {
         method: 'POST',
         success: function (data) {
             clickOnProduct(prodid);
+            clickOnGroup(sessionStorage.getItem("group"));
         }
     });
     fillTotalPrice();
-    //TODO change total group price!
 }
 function editGroup(groupid, obj) {
     $("#messagepanel").show();
@@ -299,7 +297,7 @@ function addProduct(groupid){
         "<span>Description:</span><input id='entry_proddesc' type='text' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>\n" +
         "<span>Price:</span><input id='entry_prodprice' type='number' min='1' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
         "<span>Amount:</span><input id='entry_prodamount' type='number' min='1' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
-        "<span>Producer:</span><input id='entry_produser' type='text' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
+        "<span>Producer:</span><input id='entry_producer' type='text' val='' style='margin-bottom: 10px;' class='form-control form-control-sm'>"+
         "<a onclick='addProductToDB("+groupid+")' href='#content' class='btn btn-info btn-sm btn-block '>Add</a>");
 }
 
@@ -308,6 +306,7 @@ function back() {
     $("#messagepanel").hide();
     $("#messagebox").empty();
 }
+
 function addGroupToDB() {
     var name = $("#entry_groupname").val();
     var desc = $("#entry_groupdesc").val();
