@@ -116,7 +116,7 @@ margin: 15px 10% 15px 10%;
     padding:  30px;
 }
 .backbutton{
-    position:absolute;
+    position:fixed;
     top:0;
     left:0;
     width:100%;
@@ -134,6 +134,7 @@ margin: 15px 10% 15px 10%;
     background: rgba(145, 145, 145, 0.5);
     color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
+
 
 }
 
