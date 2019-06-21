@@ -1,12 +1,11 @@
 .alltitle{
-    font-size: 22px;
-    font-weight: bolder;
+    font-size: 24px;
     text-align: center;
-    margin: 10px 10px;
+    margin: 5px 0;
     padding: 0;
 }
 .alldesc{
-    font-size: 12px;
+    font-size: 16px;
 }
 .allproduct{
     font-size: 16px;

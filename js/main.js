@@ -11,7 +11,7 @@ function fillTotalPrice() {
         method: 'POST',
         success: function (json) {
             $("#totalprice").empty();
-            $("#totalprice").append("Total price: "+json);
+            $("#totalprice").append("Total price: $"+json);
         }
     });
 }
@@ -51,10 +51,10 @@ function clickOnGroup(groupid) {
             $("#productlist").empty();
             $("#productlist").append("<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'><button onclick='addProduct("+groupid+")' class='btn btn-outline-secondary btn-sm'> +new</button><br>");
             $("#groupinfo").empty();
-            $("#groupinfo").append("<button onclick='deleteGroup("+groupid+")' class='btn btn-outline-danger btn-sm delete ' >delete</button>" +
-                "<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'>" +
+            $("#groupinfo").append("<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'>" +
                 "<button onclick='editGroup("+groupid+","+json+")' class='btn btn-outline-secondary btn-sm edit'> &#9998;</button><br>" +
-                "<p style='font-size: 12px;'>"+obj["description"]+"</p><p>Total group price: "+obj["totalprice"]+"</p><button onclick='getAllGroupInfo("+groupid+")' class='btn btn-outline-info btn-sm'>all group info</button>");
+                "<p style='font-size: 13px;'>"+obj["description"]+"</p><p style='font-size: 18px;'>Total group price: $"+obj["totalprice"]+"</p><button onclick='getAllGroupInfo("+groupid+")' " +
+                "class='btn btn-outline-info btn-sm'>all group info</button><br><br><button onclick='deleteGroup(\"+groupid+\")' class='btn btn-outline-danger btn-sm delete ' >delete</button>");
 
             $.ajax({
                 url: "http://localhost:8889/api/products/"+groupid,
@@ -86,17 +86,18 @@ $("#allinfo").click(function () {
     });
 });
 function getAllGroupInfo(groupid) {
-    $("#messagepanel").show();
     $("#messagebox").empty();
+    $("#messagepanel").show();
     $.ajax({
         url: "http://localhost:8889/api/products/"+groupid,
         method: 'POST',
         success: function (json) {
             addAllGroupInfoToMessBox(json);
-            $("#messagebox").append("<button class='btn btn-success' onclick='$("+"#backbutton"+").click();'>OK</button>");
+            $("#messagebox").append("<button class='btn btn-info btn-block' onclick='$("+"#backbutton"+").click();'>OK</button>");
         }
     });
 }
+
 function addAllGroupInfoToMessBox(json) {
     json = json.replace(/'/g,'"');
     var obj = JSON.parse(json);
@@ -118,7 +119,6 @@ function addAllGroupInfoToMessBox(json) {
             "<span class='all_producer'>"+producers[i]+"</span></p></div>");
     }
 }
-
 function deleteGroup(groupid) {
     if(!confirm("Do you really want to delete this group?"))
         return;
@@ -164,18 +164,19 @@ function clickOnProduct(productid) {
             json = json.replace(/'/g,'"');
             var obj = JSON.parse(json);
             $("#productinfo").empty();
-            $("#productinfo").append("<button onclick='deleteProduct("+productid+")' class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button><p class='title'> "+ obj.prodname+"</p>" +
+            $("#productinfo").append("<p class='title'> "+ obj.prodname+"</p>" +
                 "<hr style='margin: 5px;'><button class='btn btn-outline-secondary btn-sm edit' onclick='editProduct("+productid+","+json+")'>&#9998;</button>" +
-                "<p style='font-size: 16px'>"+obj.description+"</p>" +
-                "<a> Price:"+obj.price+"</a><br><a>Amount: "+obj.amount+"</a><br><a>Producer: "+obj.producer+"</a><br>" +
-                "<input id='change_amount' type='number' class='form-control form-control-sm' min='0'>" +
-                "<button onclick='sellProduct("+productid+","+obj.amount+")' class='btn btn-outline-info btn-sm'>sell</button><button onclick='buyProduct("+productid+","+obj.amount+")' class='btn btn-outline-success btn-sm'>buy</button>");
+                "<a style='font-size: 13px'>"+obj.description+"</a>" +
+                "<p style='font-size: 18px; margin: 10px;' > Price:$"+obj.price+"<br>Amount: "+obj.amount+"<br>Producer: "+obj.producer+"<p>" +
+                "<input id='change_amount' type='number' style='margin-top: 0px;' class='form-control form-control-sm' min='0'>" +
+                "<button onclick='sellProduct("+productid+","+obj.amount+")' class='btn btn-outline-info btn-sm sellbuy'>sell</button><button onclick='buyProduct("+productid+","+obj.amount+")' class='btn btn-outline-success btn-sm sellbuy'>buy</button>" +
+                "<br><br><button onclick='deleteProduct(\"+productid+\")' class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button>");
 
         }
     });
    }
 
-function sellProduct(prodid, amount) {
+function buyProduct(prodid, amount) {
     var am = $("#change_amount").val();
     if(am=="")
         return;
@@ -187,10 +188,13 @@ function sellProduct(prodid, amount) {
         method: 'POST',
         success: function (data) {
             clickOnProduct(prodid);
+
         }
     });
+    fillTotalPrice();
+    //TODO change total group price!
 }
-function buyProduct(prodid, amount) {
+function sellProduct(prodid, amount) {
     var am = $("#change_amount").val();
     if(am=="" || amount-am<0) {
         $("#change_amount").val()
@@ -206,13 +210,15 @@ function buyProduct(prodid, amount) {
             clickOnProduct(prodid);
         }
     });
+    fillTotalPrice();
+    //TODO change total group price!
 }
 function editGroup(groupid, obj) {
     $("#messagepanel").show();
     $("#messagebox").empty();
-    $("#messagebox").append("<span>Group name:</span><br><input id='entry_groupname' type='text' value='"+obj.groupname+"' maxlength='20'>" +
-        "<span>Description:</span><br><input id='entry_groupdesc' type='text' value='"+obj.description+"' style='margin-bottom: 10px;' class='form-control'>" +
-        "<a onclick='editGroupInDB("+groupid+")' href='#content' class='btn btn-success entry_long'>Change</a>");
+    $("#messagebox").append("<span>Group name:</span><input id='entry_groupname' type='text' value='"+obj.groupname+"' maxlength='20' class='form-control form-control-sm'>" +
+        "<span>Description:</span><input id='entry_groupdesc' type='text' value='"+obj.description+"' style='margin-bottom: 10px;' class='form-control form-control-sm'>" +
+        "<a onclick='editGroupInDB("+groupid+")' href='#content' class='btn btn-info btn-block'>Change</a>");
 
 }
 function editGroupInDB(groupid) {
@@ -240,12 +246,12 @@ function editGroupInDB(groupid) {
 function editProduct(prodid, obj) {
     $("#messagepanel").show();
     $("#messagebox").empty();
-    $("#messagebox").append("<span>Product name:</span><br><input id='entry_prodname' type='text' value='"+obj.prodname+"' maxlength='20'>" +
-        "<span>Description:</span><br><input id='entry_proddesc' type='text' value='"+obj.description+"' style='margin-bottom: 10px;' class='form-control'>" +
-        "<span>Price:</span><br><input id='entry_prodprice' type='number' value='"+obj.price+"' style='margin-bottom: 10px;' class='form-control'>" +
-        "<span>Amount:</span><br><input id='entry_prodamount' type='number' value='"+obj.amount+"' style='margin-bottom: 10px;' class='form-control'>" +
-        "<span>Producer:</span><br><input id='entry_producer' type='text' value='"+obj.producer+"' style='margin-bottom: 10px;' class='form-control'>" +
-        "<a onclick='editProductInDB("+prodid+")' href='#content' class='btn btn-success entry_long'>Change</a>");
+    $("#messagebox").append("<span>Product name:</span><input id='entry_prodname' type='text' value='"+obj.prodname+"' class='form-control form-control-sm'maxlength='20'>" +
+        "<span>Description:</span><input id='entry_proddesc' type='text' value='"+obj.description+"' style='margin-bottom: 10px;' class='form-control form-control-sm'>" +
+        "<span>Price:</span><input id='entry_prodprice' type='number' value='"+obj.price+"' style='margin-bottom: 10px;' class='form-control form-control-sm'>" +
+        "<span>Amount:</span><input id='entry_prodamount' type='number' value='"+obj.amount+"' style='margin-bottom: 10px;' class='form-control form-control-sm'>" +
+        "<span>Producer:</span><input id='entry_producer' type='text' value='"+obj.producer+"' style='margin-bottom: 10px;' class='form-control form-control-sm'>" +
+        "<a onclick='editProductInDB("+prodid+")' href='#content' class='btn btn-info btn-block'>Change</a>");
 }
 
 function editProductInDB(prodid) {
@@ -338,6 +344,4 @@ function addProductToDB(groupid) {
         }
     });
 }
-
-
 

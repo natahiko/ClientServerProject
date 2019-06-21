@@ -92,11 +92,7 @@ margin: 15px 10% 15px 10%;
 .edit{
     float: right;
 }
-.delete{
-    position: absolute;
-    bottom: 2%;
-    left:3%;
-}
+
 
 .messagepanel{
     display: none;
@@ -112,7 +108,7 @@ margin: 15px 10% 15px 10%;
 #messagebox{
     vertical-align: middle;
     position: absolute;
-    top:20%;
+    top:16%;
     left:25%;
     width:50%;
     height: auto;
@@ -139,4 +135,10 @@ margin: 15px 10% 15px 10%;
     color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
 
+}
+
+.sellbuy{
+    width:44%;
+    float: left;
+    margin: 5px;
 }
