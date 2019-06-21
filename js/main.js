@@ -79,8 +79,10 @@ $("#allinfo").click(function () {
         method: 'POST',
         success: function (json) {
             var array = json.split("#:#");
-            for(var i=0; i<array.length; i++)
+            for(var i=0; i<array.length; i++){
+                alert(array[i]);
                 addAllGroupInfoToMessBox(array[i]);
+            }
             $("#messagebox").append("<button class='btn btn-success' onclick='$("+"#backbutton"+").click();'>OK</button>");
         }
     });
