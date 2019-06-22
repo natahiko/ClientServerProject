@@ -148,6 +148,7 @@ function deleteProduct(prodid) {
             $("#productinfo").empty();
             sessionStorage.setItem("product","");
             clickOnGroup(sessionStorage.getItem("group"));
+            fillTotalPrice();
         }
     });
 }
@@ -278,6 +279,7 @@ function editProductInDB(prodid) {
             fillGroupLinks();
             clickOnGroup(sessionStorage.getItem("group"));
             clickOnProduct(prodid);
+            fillTotalPrice();
         }
     });
 }
