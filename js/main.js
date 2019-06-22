@@ -10,6 +10,7 @@ function fillTotalPrice() {
         url: 'http://localhost:8889/api/price',
         method: 'POST',
         success: function (json) {
+            json = decrypt(json);
             $("#totalprice").empty();
             $("#totalprice").append("Total price: $"+json);
         }
@@ -25,6 +26,7 @@ function fillGroupLinks(){
         url: 'http://localhost:8889/api/allgroups',
         method: 'GET',
         success: function (json) {
+            json = decrypt(json);
             var array = JSON.parse(json);
             for(var i=0; i<array.length; i++){
                 var ar = array[i].split("#");
@@ -46,6 +48,7 @@ function clickOnGroup(groupid) {
         },
         cache: 'no-cache',
         success: function (json) {
+            json = decrypt(json);
             json = json.replace(/'/g,'"');
             var obj = JSON.parse(json);
             $("#productlist").empty();
@@ -60,6 +63,7 @@ function clickOnGroup(groupid) {
                 url: "http://localhost:8889/api/products/"+groupid,
                 method: 'GET',
                 success: function (json) {
+                    json = decrypt(json);
                     var array = JSON.parse(json);
                     for(var i=0;i<array.length;i++){
                         var ar = array[i].split("#");
@@ -78,6 +82,7 @@ $("#allinfo").click(function () {
         url: "http://localhost:8889/api/allgroups",
         method: 'POST',
         success: function (json) {
+            json = decrypt(json);
             var array = json.split("#:#");
             for(var i=0; i<array.length; i++){
                 addAllGroupInfoToMessBox(array[i]);
@@ -93,6 +98,7 @@ function getAllGroupInfo(groupid) {
         url: "http://localhost:8889/api/products/"+groupid,
         method: 'POST',
         success: function (json) {
+            json = decrypt(json);
             addAllGroupInfoToMessBox(json);
             $("#messagebox").append("<button class='btn btn-info btn-block' onclick='back()'>OK</button>");
         }
@@ -123,6 +129,7 @@ function addAllGroupInfoToMessBox(json) {
 function deleteGroup(groupid) {
     if(!confirm("Do you really want to delete this group?"))
         return;
+
     $.ajax({
         url: "http://localhost:8889/api/group/"+groupid,
         method: 'DELETE',
@@ -163,6 +170,7 @@ function clickOnProduct(productid) {
         },
         cache: 'no-cache',
         success: function (json) {
+            json = decrypt(json);
             json = json.replace(/'/g,'"');
             var obj = JSON.parse(json);
             $("#productinfo").empty();
@@ -183,7 +191,9 @@ function buyProduct(prodid, amount) {
     if(am=="")
         return;
     amount = (+am + +amount);
-    var url = 'http://localhost:8889/api/good?id='+prodid;
+    var query = 'id='+prodid;
+    query = encrypt(query);
+    var url = 'http://localhost:8889/api/good?'+query;
     url += '&amount='+amount;
     jQuery.ajax({
         url: url,
@@ -202,7 +212,9 @@ function sellProduct(prodid, amount) {
         return;
     }
     amount -= am;
-    var url = 'http://localhost:8889/api/good?id='+prodid;
+    var query = 'id='+prodid;
+    query = encrypt(query);
+    var url = 'http://localhost:8889/api/good?'+query;
     url += '&amount='+amount;
     jQuery.ajax({
         url: url,
@@ -229,8 +241,10 @@ function editGroupInDB(groupid) {
         alert("Uncorrect data!");
         return;
     }
+    var query = 'id='+groupid;
+    query = encrypt(query);
     $("#backbutton").click();
-    var url = 'http://localhost:8889/api/group?id='+groupid;
+    var url = 'http://localhost:8889/api/group?'+query;
         url += '&groupname='+name;
         url += '&description='+desc;
     jQuery.ajax({
@@ -317,8 +331,11 @@ function addGroupToDB() {
         return;
     }
     $("#backbutton").click();
+
+    var query = "description="+desc+"&groupname="+name;
+    query = encrypt(query);
     $.ajax({
-        url: "http://localhost:8889/api/group?description="+desc+"&groupname="+name,
+        url: "http://localhost:8889/api/group?"+query,
         method: "PUT",
         success: function (json) {
             alert("New group added successfully");

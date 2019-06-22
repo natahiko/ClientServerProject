@@ -5,11 +5,14 @@ $("#search_button").click(function () {
 
     if(search=="") return;
     $("#search_field").val("");
-    var url = 'http://localhost:8889/api/allgroups?search='+search;
+    var query = 'search='+search;
+    query = encrypt(query);
+    var url = 'http://localhost:8889/api/allgroups?'+query;
     jQuery.ajax({
         url: url,
         method: 'PUT',
         success: function (json) {
+            json = decrypt(json);
             json = json.replace(/'/g,'"');
             var obj = JSON.parse(json);
             var groupids = obj.groupids;
