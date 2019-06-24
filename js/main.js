@@ -54,9 +54,9 @@ function clickOnGroup(groupid) {
             $("#productlist").empty();
             $("#productlist").append("<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'><button onclick='addProduct("+groupid+")' class='btn btn-outline-secondary btn-sm'> +new</button><br>");
             $("#groupinfo").empty();
-            $("#groupinfo").append("<p class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'>" +
+            $("#groupinfo").append("<p id='groupname_in_prodlist' class='title'> "+ obj["groupname"]+"</p><hr style='margin: 5px;'>" +
                 "<button onclick='editGroup("+groupid+","+json+")' class='btn btn-outline-secondary btn-sm edit'> &#9998;</button><br>" +
-                "<p style='font-size: 13px;'>"+obj["description"]+"</p><p style='font-size: 18px;'>Total group price: $"+obj["totalprice"]+"</p><button onclick='getAllGroupInfo("+groupid+")' " +
+                "<p style='font-size: 13px;'>"+obj["description"]+"</p><p id='total_group_price_field' style='font-size: 18px;'>Total group price: $"+obj["totalprice"]+"</p><button onclick='getAllGroupInfo("+groupid+")' " +
                 "class='btn btn-outline-info btn-sm'>all group info</button><br><br><button onclick='deleteGroup("+groupid+")' class='btn btn-outline-danger btn-sm delete ' >delete</button>");
 
             $.ajax({
@@ -73,8 +73,37 @@ function clickOnGroup(groupid) {
             });
         }
     });
-
 }
+function changeGroupProductsList(groupid) {
+    var groupname = $("#groupname_in_prodlist").html();
+            $("#productlist").empty();
+            $("#productlist").append("<p class='title'> "+groupname+"</p><hr style='margin: 5px;'><button onclick='addProduct("+groupid+")' class='btn btn-outline-secondary btn-sm'> +new</button><br>");
+
+            $.ajax({
+                url: "http://localhost:8889/api/products/"+groupid,
+                method: 'GET',
+                success: function (json) {
+                    json = decrypt(json);
+                    var array = JSON.parse(json);
+                    for(var i=0;i<array.length;i++){
+                        var ar = array[i].split("#");
+                        $("#productlist").append("<a href='#body' class='btn btn-link btn-sm' onclick='clickOnProduct("+ar[1]+")'>"+ar[0]+"</a><br>");
+                    }
+                }
+            });
+}
+
+function changeTotalGroupPrice(groupid){
+    $.ajax({
+        url: "http://localhost:8889/api/price/"+groupid,
+        method: 'GET',
+        success: function (json) {
+           $("#total_group_price_field").empty();
+            $("#total_group_price_field").append("Total group price: $"+json+"");
+        }
+    });
+}
+
 $("#allinfo").click(function () {
     $("#messagepanel").show();
     $("#messagebox").empty();
@@ -108,22 +137,27 @@ function getAllGroupInfo(groupid) {
 function addAllGroupInfoToMessBox(json) {
     json = json.replace(/'/g,'"');
     var obj = JSON.parse(json);
-    var names = obj.prodnames.split('|').join('"');
-    names = JSON.parse(names);
-    var descs = obj.descriptions.split('|').join('"');
-    descs = JSON.parse(descs);
-    var prices = obj.prices;
-    prices = JSON.parse(prices);
-    var amounts = obj.amounts;
-    amounts = JSON.parse(amounts);
-    var producers = obj.producers.split('|').join('"');
-    producers = JSON.parse(producers);
-    var ids = JSON.parse(obj.ids);
     $("#messagebox").append("<p class='finded_title'>"+obj.groupname+"</p><hr style='margin: 5px;'><p class='alldesc'>"+obj.description+"</p>");
-    for(var i=0;i<names.length; i++){
-        $("#messagebox").append("<div class='allproduct'><p><span class='all_prodname'>"+names[i].toUpperCase()+"</span> "+prices[i]+"$</p>" +
-            "<p class='all_proddesc'>"+descs[i]+"</p><p>In storage: <span class='all_prodam'>"+amounts[i]+"</span> from " +
-            "<span class='all_producer'>"+producers[i]+"</span></p></div>");
+    try {
+        var names = obj.prodnames.split('|').join('"');
+        names = JSON.parse(names);
+        var descs = obj.descriptions.split('|').join('"');
+        descs = JSON.parse(descs);
+        var prices = obj.prices;
+        prices = JSON.parse(prices);
+        var amounts = obj.amounts;
+        amounts = JSON.parse(amounts);
+        var producers = obj.producers.split('|').join('"');
+        producers = JSON.parse(producers);
+        var ids = JSON.parse(obj.ids);
+
+        for (var i = 0; i < names.length; i++) {
+            $("#messagebox").append("<div class='allproduct'><p><span class='all_prodname'>" + names[i].toUpperCase() + "</span> " + prices[i] + "$</p>" +
+                "<p class='all_proddesc'>" + descs[i] + "</p><p>In storage: <span class='all_prodam'>" + amounts[i] + "</span> from " +
+                "<span class='all_producer'>" + producers[i] + "</span></p></div>");
+        }
+    }catch(err){
+        $("#messagebox").append("<div style='margin: 20px; color: #737373'>No products in this group</div>");
     }
 }
 function deleteGroup(groupid) {
@@ -150,11 +184,10 @@ function deleteProduct(prodid) {
         url: "http://localhost:8889/api/good/"+prodid,
         method: 'DELETE',
         success: function () {
-            $("#productlist").empty();
-            $("#groupinfo").empty();
             $("#productinfo").empty();
             sessionStorage.setItem("product","");
-            clickOnGroup(sessionStorage.getItem("group"));
+            changeGroupProductsList(sessionStorage.getItem("group"));
+            changeTotalGroupPrice(sessionStorage.getItem("group"));
             fillTotalPrice();
         }
     });
@@ -177,7 +210,7 @@ function clickOnProduct(productid) {
             $("#productinfo").append("<p class='title'> "+ obj.prodname+"</p>" +
                 "<hr style='margin: 5px;'><button class='btn btn-outline-secondary btn-sm edit' onclick='editProduct("+productid+","+json+")'>&#9998;</button>" +
                 "<a style='font-size: 13px'>"+obj.description+"</a>" +
-                "<p style='font-size: 18px; margin: 10px;' > Price:$"+obj.price+"<br>Amount: "+obj.amount+"<br>Producer: "+obj.producer+"<p>" +
+                "<p style='font-size: 18px; margin: 10px;' > Price:$"+obj.price+"<br>Amount: <span id='product_price_field'>"+obj.amount+"</span><br>Producer: "+obj.producer+"<p>" +
                 "<input id='change_amount' type='number' style='margin-top: 0px;' class='form-control form-control-sm' min='0'>" +
                 "<button onclick='sellProduct("+productid+","+obj.amount+")' class='btn btn-outline-info btn-sm sellbuy'>sell</button><button onclick='buyProduct("+productid+","+obj.amount+")' class='btn btn-outline-success btn-sm sellbuy'>buy</button>" +
                 "<br><br><button onclick='deleteProduct("+productid+")' class='btn btn-outline-danger btn-sm delete ' style='left:19%;'>delete</button>");
@@ -185,22 +218,26 @@ function clickOnProduct(productid) {
         }
     });
    }
-
+function changeProductAmount(amount) {
+    $("#product_price_field").empty();
+    $("#product_price_field").append(amount);
+    $("#change_amount").val("");
+}
 function buyProduct(prodid, amount) {
     var am = $("#change_amount").val();
     if(am=="")
         return;
     amount = (+am + +amount);
     var query = 'id='+prodid;
+    query += '&amount='+amount;
     query = encrypt(query);
     var url = 'http://localhost:8889/api/good?'+query;
-    url += '&amount='+amount;
     jQuery.ajax({
         url: url,
         method: 'POST',
         success: function (data) {
-            clickOnProduct(prodid);
-            clickOnGroup(sessionStorage.getItem("group"));
+            changeProductAmount(amount);
+            changeTotalGroupPrice(sessionStorage.getItem("group"));
         }
     });
     fillTotalPrice();
@@ -213,15 +250,16 @@ function sellProduct(prodid, amount) {
     }
     amount -= am;
     var query = 'id='+prodid;
+    query += '&amount='+amount;
     query = encrypt(query);
     var url = 'http://localhost:8889/api/good?'+query;
-    url += '&amount='+amount;
+
     jQuery.ajax({
         url: url,
         method: 'POST',
         success: function (data) {
-            clickOnProduct(prodid);
-            clickOnGroup(sessionStorage.getItem("group"));
+            changeProductAmount(amount);
+            changeTotalGroupPrice(sessionStorage.getItem("group"));
         }
     });
     fillTotalPrice();
@@ -242,16 +280,16 @@ function editGroupInDB(groupid) {
         return;
     }
     var query = 'id='+groupid;
+    query += '&groupname='+name;
+    query += '&description='+desc;
     query = encrypt(query);
     $("#backbutton").click();
     var url = 'http://localhost:8889/api/group?'+query;
-        url += '&groupname='+name;
-        url += '&description='+desc;
+
     jQuery.ajax({
         url: url,
         method: 'POST',
         success: function (data) {
-            fillGroupLinks();
             clickOnGroup(groupid);
             if(sessionStorage.getItem("product")!="")
                 clickOnProduct(sessionStorage.getItem("product"));
@@ -290,8 +328,7 @@ function editProductInDB(prodid) {
         url: url,
         method: 'POST',
         success: function (data) {
-            fillGroupLinks();
-            clickOnGroup(sessionStorage.getItem("group"));
+            changeTotalGroupPrice(sessionStorage.getItem("group"));
             clickOnProduct(prodid);
             fillTotalPrice();
         }
@@ -338,8 +375,10 @@ function addGroupToDB() {
         url: "http://localhost:8889/api/group?"+query,
         method: "PUT",
         success: function (json) {
-            alert("New group added successfully");
-            fillGroupLinks();
+            if(decrypt(json)=="true") {
+                alert("New group added successfully");
+                fillGroupLinks();
+            }else alert("Group with such name already exist");
         }
     });
 }
@@ -359,8 +398,11 @@ function addProductToDB(groupid) {
         url: "http://localhost:8889/api/good?description="+desc+"&prodname="+name+"&price="+price+"&amount="+amount+"&groupid="+groupid+"&producer="+producer,
         method: "PUT",
         success: function (json) {
-            alert("New group added successfully");
-            clickOnGroup(groupid);
+            if(decrypt(json)=="true") {
+                alert("New group added successfully");
+                changeGroupProductsList(groupid);
+            } else alert("Group with such name already exist");
+
         }
     });
 }
