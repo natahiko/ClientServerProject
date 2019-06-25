@@ -174,6 +174,7 @@ function deleteGroup(groupid) {
             sessionStorage.setItem("group","");
             sessionStorage.setItem("product","");
             fillGroupLinks();
+            fillTotalPrice();
         }
     });
 }
@@ -227,6 +228,7 @@ function buyProduct(prodid, amount) {
     var am = $("#change_amount").val();
     if(am=="")
         return;
+    am = +amount + +am;
     var query = 'amount='+am;
     query = encrypt(query);
     var url = 'http://localhost:8889/api/products/'+prodid+'?'+query;
@@ -237,17 +239,17 @@ function buyProduct(prodid, amount) {
             data = decrypt(data);
             changeProductAmount(data);
             changeTotalGroupPrice(sessionStorage.getItem("group"));
+            fillTotalPrice();
         }
     });
-    fillTotalPrice();
 }
 function sellProduct(prodid, amount) {
     var am = $("#change_amount").val();
     if(am=="" || amount-am<0) {
-        $("#change_amount").val()
+        $("#change_amount").val("");
         return;
     }
-    am = +am*(-1);
+    am = +amount + +am*(-1);
     var query = 'amount='+am;
     query = encrypt(query);
     var url = 'http://localhost:8889/api/products/'+prodid+'?'+query;
@@ -259,9 +261,9 @@ function sellProduct(prodid, amount) {
             data = decrypt(data);
             changeProductAmount(data);
             changeTotalGroupPrice(sessionStorage.getItem("group"));
+            fillTotalPrice();
         }
     });
-    fillTotalPrice();
 }
 function editGroup(groupid, obj) {
     $("#messagepanel").show();
@@ -393,13 +395,17 @@ function addProductToDB(groupid) {
         return;
     }
     $("#backbutton").click();
+    var query = "description="+desc+"&prodname="+name+"&price="+price+"&amount="+amount+"&groupid="+groupid+"&producer="+producer;
+    query = encrypt(query);
     $.ajax({
-        url: "http://localhost:8889/api/good?description="+desc+"&prodname="+name+"&price="+price+"&amount="+amount+"&groupid="+groupid+"&producer="+producer,
+        url: "http://localhost:8889/api/good?"+query,
         method: "PUT",
         success: function (json) {
             if(decrypt(json)=="true") {
                 alert("New group added successfully");
                 changeGroupProductsList(groupid);
+                fillTotalPrice();
+                changeTotalGroupPrice(sessionStorage.getItem("group"));
             } else alert("Group with such name already exist");
 
         }
