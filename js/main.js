@@ -227,16 +227,15 @@ function buyProduct(prodid, amount) {
     var am = $("#change_amount").val();
     if(am=="")
         return;
-    amount = (+am + +amount);
-    var query = 'id='+prodid;
-    query += '&amount='+amount;
+    var query = 'amount='+am;
     query = encrypt(query);
-    var url = 'http://localhost:8889/api/good?'+query;
+    var url = 'http://localhost:8889/api/products/'+prodid+'?'+query;
     jQuery.ajax({
         url: url,
-        method: 'POST',
+        method: 'PUT',
         success: function (data) {
-            changeProductAmount(amount);
+            data = decrypt(data);
+            changeProductAmount(data);
             changeTotalGroupPrice(sessionStorage.getItem("group"));
         }
     });
@@ -248,17 +247,17 @@ function sellProduct(prodid, amount) {
         $("#change_amount").val()
         return;
     }
-    amount -= am;
-    var query = 'id='+prodid;
-    query += '&amount='+amount;
+    am = +am*(-1);
+    var query = 'amount='+am;
     query = encrypt(query);
-    var url = 'http://localhost:8889/api/good?'+query;
+    var url = 'http://localhost:8889/api/products/'+prodid+'?'+query;
 
     jQuery.ajax({
         url: url,
-        method: 'POST',
+        method: 'PUT',
         success: function (data) {
-            changeProductAmount(amount);
+            data = decrypt(data);
+            changeProductAmount(data);
             changeTotalGroupPrice(sessionStorage.getItem("group"));
         }
     });
